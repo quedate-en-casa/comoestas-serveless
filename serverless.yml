@@ -1,0 +1,60 @@
+service: comoestasserverlesscrud-dev
+
+provider:
+    name: aws
+    runtime: nodejs10.x
+    profile: karibu
+    region: us-east-1
+    environment:
+        tableName: ${self:custom.tableName}
+    iamRoleStatements:
+        - Effect: Allow
+          Action:
+              - dynamodb:*
+          Resource: '*'
+
+plugins:
+    - serverless-s3-sync
+    - serverless-webpack
+
+package:
+    individually: true
+
+custom:
+    tableName: patient-register
+    s3Sync:
+        - bucketName: comoestasserverlesscrud-devuploadbucket-12312
+          localDir: UploadData
+
+functions:
+    getPatientRegister:
+        handler: lambdas/endpoints/getPatientRegister.handler
+        events:
+            - http:
+                  path: get-patient-register/{ID}
+                  method: GET
+                  cors: true
+    createPatientRegister:
+        handler: lambdas/endpoints/createPatientRegister.handler
+        events:
+            - http:
+                  path: create-patient-register/{ID}
+                  method: POST
+                  cors: true
+resources:
+    Resources:
+        DemoBucketUpload:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: comoestasserverlesscrud-devuploadbucket-12312
+        MyDynamoDbTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: ${self:custom.tableName}
+                AttributeDefinitions:
+                    - AttributeName: ID
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: ID
+                      KeyType: HASH
+                BillingMode: PAY_PER_REQUEST
