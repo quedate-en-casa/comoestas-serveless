@@ -21,23 +21,52 @@ const Dynamo = {
         return data.Item;
     },
 
-    async write(data, TableName) {
-        if (!data.ID) {
-            throw Error('no ID on the data');
+    async getItemsByRut(rut, TableName) {
+        console.log("Obteniendo  registros del paciente: ", rut);
+        var params = {
+            TableName: TableName,
+            FilterExpression: 'contains(rut, :rut)',
+            ExpressionAttributeValues: {
+              ':rut': rut
+            }
+          };
+
+        const data = await documentClient.scan(params).promise();
+        if (!data || !data.Items) {
+            throw Error(`There was an error fetching the data for rut of ${rut} from ${TableName}`);
         }
 
-        const params = {
-            TableName,
-            Item: data,
-        };
+        console.log("Query succeeded.");
+        data.Items.forEach(function (item) {
+            console.log(" Result register patient - ", item);
+        });
 
-        const res = await documentClient.put(params).promise();
 
-        if (!res) {
-            throw Error(`There was an error inserting ID of ${data.ID} in table ${TableName}`);
-        }
+        return data.Items;
 
-        return data;
+
     },
+
+
+
+
+async write(data, TableName) {
+    if (!data.ID) {
+        throw Error('no ID on the data');
+    }
+
+    const params = {
+        TableName,
+        Item: data,
+    };
+
+    const res = await documentClient.put(params).promise();
+
+    if (!res) {
+        throw Error(`There was an error inserting ID of ${data.ID} in table ${TableName}`);
+    }
+
+    return data;
+},
 };
 module.exports = Dynamo;

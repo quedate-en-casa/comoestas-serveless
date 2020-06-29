@@ -1,3 +1,5 @@
+org: agudelocontrerasj
+app: comoestasserverlesscrud-dev-app
 service: comoestasserverlesscrud-dev
 
 provider:
@@ -34,6 +36,13 @@ functions:
                   path: get-patient-register/{ID}
                   method: GET
                   cors: true
+    getPatientRegistersByRut:
+        handler: lambdas/endpoints/getPatientRegistersByRut.handler
+        events:
+            - http:
+                    path: get-patient-register-by-rut/{rut}
+                    method: GET
+                    cors: true
     createPatientRegister:
         handler: lambdas/endpoints/createPatientRegister.handler
         events:
