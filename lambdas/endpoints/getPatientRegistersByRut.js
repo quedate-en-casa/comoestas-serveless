@@ -1,5 +1,6 @@
 const Responses = require('../common/API_Responses');
 const Dynamo = require('../common/Dynamo');
+const cryptotool = require('../common/crypto-tool');
 
 const tableName = process.env.tableName;
 
@@ -12,6 +13,9 @@ exports.handler = async event => {
     }
 
     let rut = event.pathParameters.rut;
+
+    // var cipherText = cryptotool.enc(rut);
+    // let rutEncripted=cryptotool.dec(cipherText);
 
     const registers = await Dynamo.getItemsByRut(rut, tableName).catch(err => {
         console.log('error in Dynamo Get', err);

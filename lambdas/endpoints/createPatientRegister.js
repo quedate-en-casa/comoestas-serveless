@@ -1,6 +1,7 @@
 const Responses = require('../common/API_Responses');
 const Dynamo = require('../common/Dynamo');
 
+
 const tableName = process.env.tableName;
 
 exports.handler = async event => {
@@ -24,6 +25,11 @@ exports.handler = async event => {
     }
 
     user.ID = create_UUID();
+    user.date = new Date().toISOString();
+
+    // var encryptedAES = CryptoJS.AES.encrypt(user.rut, "comoestaskey");
+    // console.log(`RUT encriptado: ${encryptedAES}`);
+    // user.rut=new String(encryptedAES).toString();
 
     const newUser = await Dynamo.write(user, tableName).catch(err => {
         console.log('error in dynamo write', err);
