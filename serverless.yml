@@ -9,6 +9,7 @@ provider:
     region: us-east-1
     environment:
         tableName: ${self:custom.tableName}
+        tableDoctor: ${self:custom.tableDoctor}
     iamRoleStatements:
         - Effect: Allow
           Action:
@@ -24,6 +25,7 @@ package:
 
 custom:
     tableName: patient-register
+    tableDoctor: doctor-comoestas
     s3Sync:
         - bucketName: comoestasserverlesscrud-devuploadbucket-12312
           localDir: UploadData
@@ -36,6 +38,13 @@ functions:
                   path: get-patient-register/{ID}
                   method: GET
                   cors: true
+    getDoctor:
+        handler: lambdas/endpoints/getDoctor.handler
+        events:
+            - http:
+                    path: get-doctor/{ID}
+                    method: GET
+                    cors: true
     getPatientRegistersByRut:
         handler: lambdas/endpoints/getPatientRegistersByRut.handler
         events:
@@ -50,6 +59,13 @@ functions:
                   path: create-patient-register/{ID}
                   method: POST
                   cors: true
+    createDoctor:
+        handler: lambdas/endpoints/createDoctor.handler
+        events:
+            - http:
+                    path: create-doctor/{ID}
+                    method: POST
+                    cors: true
 resources:
     Resources:
         DemoBucketUpload:
@@ -67,3 +83,15 @@ resources:
                     - AttributeName: ID
                       KeyType: HASH
                 BillingMode: PAY_PER_REQUEST
+        DoctorTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: ${self:custom.tableDoctor}
+                AttributeDefinitions:
+                    - AttributeName: ID
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: ID
+                      KeyType: HASH
+                BillingMode: PAY_PER_REQUEST
+        
