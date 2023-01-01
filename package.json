@@ -3,6 +3,6 @@
     "crypto-js": "^4.0.0",
     "serverless-s3-sync": "^1.14.3",
     "serverless-webpack": "^5.3.2",
-    "webpack": "^4.43.0"
+    "webpack": "^5.75.0"
   }
 }
